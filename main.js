@@ -358,7 +358,9 @@ function displayResults(isNewSearch = true, keywords = '') {
                     ` : ''}
                 </div>
                  <div class="pill-info">
-                     <h3><a href="${pill.link_label}" target="_blank">${pill.name_ch}</a></h3>
+                     <h3><a href="${pill.link_label}" target="_blank"
+                     onclick="logEvent('pill_label_click', { 'pill_name': '${pill.name_ch}', 'pill_id': '${pill.id}' })"
+                     >${pill.name_ch}</a></h3>
                      <p style="color:#666; margin-bottom:5px;">${pill.name_en}<br><span style="color:#AAA; font-size: 12px">${pill.med_name}</span></p>
                      <p>外觀：${pill.color}、${pill.shape}<br>　　　${pill.size} mm、${pill.cut}刻痕</p>
                      <p>藥品標記：${pill.marks_origin || '無資料'}</p>
@@ -404,8 +406,14 @@ function displayResults(isNewSearch = true, keywords = '') {
         if (criteria.size) keywordParts.push(`${criteria.size} mm`);
         keywords = keywordParts.length > 0 ? `您的關鍵字 → 藥品標記: ${keywordParts.join('、')}` : '';
         
+        logEvent('search_perform', criteria);
+
         // 呼叫您原本的 searchPills
         allSearchResults = searchPills(criteria);
+
+        if (allSearchResults.length === 0) {
+            logEvent('no_results_found', criteria);
+        }
         displayResults(true, keywords);
     }
 
@@ -442,6 +450,7 @@ function displayResults(isNewSearch = true, keywords = '') {
     document.getElementById('loadMoreBtn').addEventListener('click', () => {
         currentPage++;
         displayResults(false);
+        logEvent('load_more', { 'current_page': currentPage} );
     });
 
 
@@ -453,6 +462,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
         document.getElementById('loadMoreContainer').style.display = 'none';
         document.getElementById('marks').focus()
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        logEvent('search_reset', {});
     });
     
 initApp();
@@ -496,8 +506,13 @@ function openModal(pillId) {
     const pill = pillsData.find(p => p.id === pillId);
     const pill_original_link = pill.all_photo_links.split(';;;') || [];
 
+
     if (!pill) return;
 
+    logEvent('image_view_zoom', {
+        'pill_name': pill.name_ch,
+        'pill_id': pillId
+    });
     currentOpeningPillId = pillId; // 記住 ID
     currentModalImages = pill_original_link || [];
     currentModalIndex = pillActiveIndexMap[pillId] || 0;

@@ -9,6 +9,25 @@
   gtag('js', new Date());
 
   gtag('config', 'G-BQGE25QZ4C');
+
+function logEvent(eventName, params = {}) {
+
+    // 加上時間戳記
+    const enrichedParams = {
+        ...params,
+        'timestamp': new Date().toISOString()
+    };
+
+    // 3. 安全地呼叫 gtag (確保 window.gtag 存在)
+    if (typeof window.gtag === 'function') {
+        window.gtag('event', eventName, enrichedParams);
+        // 開發時可以在這加一行，讓你在 Console 看到事件真的有送出
+        console.log(`[GA4 Event] ${eventName}:`, enrichedParams);
+    } else {
+        console.warn('GA4 (gtag) 尚未載入完成');
+    }
+}
+
 </script>
 
     <meta charset="UTF-8">
