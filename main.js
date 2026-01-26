@@ -337,7 +337,7 @@ function displayResults(isNewSearch = true, keywords = '') {
             const hasMultipleImages = imgUrls.length > 1;
             card.innerHTML = `
                 <div class="pill-image-container">
-                    <img src="${imgUrls[0]}" 
+                    <img src="${encodeURIComponent(imgUrls[0])}" 
                         loading="lazy"
                         alt="${pill.name_ch}" 
                         class="pill-image" 
