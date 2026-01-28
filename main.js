@@ -221,7 +221,7 @@ const CONFIG = {
      * 支援空格分隔的多個關鍵詞：輸入的每個關鍵詞都要在 marks_search 中找到
      */
     function matchMarksOptimized(normalizedSearch, marksSearch, marksOrigin) {
-        const searchWithoutSpace = normalizedSearch.replace(/\s/g, '');
+        const searchWithoutSpace = normalizedSearch.toLowerCase().replace(/\s/g, '');
         const marksNormalized = marksSearch.toLowerCase(); // 保留空格
         const marksWithoutSpace = marksNormalized.replace(/\s/g, '');
         const originalMarksNormalized = marksOrigin.toLowerCase().replace(/\s/g, '');
@@ -230,7 +230,10 @@ const CONFIG = {
         // console.log('Comparing:', normalizedSearch, '->', marksNormalized);
         // 1. 完全匹配（忽略空格）
         if (marksWithoutSpace === searchWithoutSpace) return 1.5;
+        if (originalMarksNormalized === searchWithoutSpace) return 1.5;
         
+
+
         // 2. 按空格分隔成多個關鍵詞，檢查每個都要出現（在保留空格的版本中）
         const keywords = normalizedSearch.split(" ").filter(k => k.length > 0);
         const keywordsOrigin = marksNormalized.split(" ").filter(k => k.length > 0);
